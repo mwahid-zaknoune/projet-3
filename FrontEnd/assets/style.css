@@ -416,4 +416,18 @@ footer nav ul {
 	height: 40px;
 	border: none;
 	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+}.modal-work {
+	position: relative;
+}
+
+.delete-work {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	background-color: black;
+	color: white;
+	border: none;
+	border-radius: 3px;
+	cursor: pointer;
+	padding: 4px 6px;
 }

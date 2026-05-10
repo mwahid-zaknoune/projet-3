@@ -102,7 +102,6 @@ function setActive(btnActive) {
 
 function checkAdminMode() {
   const token = localStorage.getItem("token");
-
   const editButton = document.getElementById("edit-button");
 
   if (token) {
@@ -178,6 +177,10 @@ backModal.addEventListener("click", () => {
   backModal.classList.add("hidden");
 });
 
+// =====================
+// GALERIE MODALE + SUPPRESSION
+// =====================
+
 function displayModalGallery(works) {
   const modalGallery = document.getElementById("modal-gallery");
 
@@ -185,12 +188,43 @@ function displayModalGallery(works) {
 
   works.forEach(work => {
     const figure = document.createElement("figure");
+    figure.classList.add("modal-work");
 
     const img = document.createElement("img");
     img.src = work.imageUrl;
     img.alt = work.title;
 
+    const deleteButton = document.createElement("button");
+    deleteButton.classList.add("delete-work");
+    deleteButton.textContent = "🗑";
+
+    deleteButton.addEventListener("click", () => {
+      deleteWork(work.id);
+    });
+
     figure.appendChild(img);
+    figure.appendChild(deleteButton);
+
     modalGallery.appendChild(figure);
   });
+}
+
+async function deleteWork(id) {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(`http://localhost:5678/api/works/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  if (response.ok) {
+    allWorks = allWorks.filter(work => work.id !== id);
+
+    displayWorks(allWorks);
+    displayModalGallery(allWorks);
+  } else {
+    console.log("Erreur suppression");
+  }
 }
