@@ -24,6 +24,7 @@ fetch("http://localhost:5678/api/categories")
   .then(categories => {
     allCategories = categories;
     createFilters(categories);
+    displayCategoriesInForm(categories);
   })
   .catch(err => console.log("Erreur categories :", err));
 
@@ -84,10 +85,6 @@ function createFilters(categories) {
   });
 }
 
-// =====================
-// ACTIVE BUTTON
-// =====================
-
 function setActive(btnActive) {
   document.querySelectorAll("#filters button").forEach(btn => {
     btn.classList.remove("active");
@@ -121,9 +118,7 @@ function checkAdminMode() {
       window.location.href = "index.html";
     });
 
-    const filters = document.getElementById("filters");
-    filters.style.display = "none";
-
+    document.getElementById("filters").style.display = "none";
     editButton.style.display = "block";
   } else {
     editButton.style.display = "none";
@@ -183,7 +178,6 @@ backModal.addEventListener("click", () => {
 
 function displayModalGallery(works) {
   const modalGallery = document.getElementById("modal-gallery");
-
   modalGallery.innerHTML = "";
 
   works.forEach(work => {
@@ -228,3 +222,69 @@ async function deleteWork(id) {
     console.log("Erreur suppression");
   }
 }
+
+// =====================
+// AJOUT PHOTO
+// =====================
+
+const photoInput = document.getElementById("photo");
+const imagePreview = document.getElementById("image-preview");
+const categorySelect = document.getElementById("category");
+const addPhotoForm = document.getElementById("add-photo-form");
+
+photoInput.addEventListener("change", () => {
+  const file = photoInput.files[0];
+
+  if (file) {
+    imagePreview.src = URL.createObjectURL(file);
+    imagePreview.classList.remove("hidden");
+  }
+});
+
+function displayCategoriesInForm(categories) {
+  categorySelect.innerHTML = "";
+
+  categories.forEach(category => {
+    const option = document.createElement("option");
+    option.value = category.id;
+    option.textContent = category.name;
+
+    categorySelect.appendChild(option);
+  });
+}
+
+addPhotoForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const title = document.getElementById("title").value;
+  const category = document.getElementById("category").value;
+  const image = photoInput.files[0];
+  const token = localStorage.getItem("token");
+
+  if (!title || !category || !image) {
+    alert("Veuillez remplir tous les champs");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("image", image);
+  formData.append("title", title);
+  formData.append("category", category);
+
+  const response = await fetch("http://localhost:5678/api/works", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: formData
+  });
+
+  if (response.ok) {
+    alert("Projet ajouté avec succès");
+
+    addPhotoForm.reset();
+    imagePreview.classList.add("hidden");
+  } else {
+    alert("Erreur lors de l’ajout du projet");
+  }
+});

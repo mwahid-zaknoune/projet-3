@@ -430,4 +430,17 @@ footer nav ul {
 	border-radius: 3px;
 	cursor: pointer;
 	padding: 4px 6px;
+}#preview-zone {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 120px;
+	background-color: #E8F1F6;
+	margin-bottom: 20px;
+}
+
+#image-preview {
+	max-width: 100%;
+	max-height: 180px;
+	object-fit: cover;
 }
