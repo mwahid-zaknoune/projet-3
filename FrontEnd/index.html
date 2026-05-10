@@ -123,6 +123,41 @@
 		</ul>
 	</nav>
 </footer>
+<div id="modal" class="modal hidden">
+
+	<div class="modal-content">
+
+		<button id="close-modal" class="close-modal">×</button>
+		<button id="back-modal" class="back-modal hidden">←</button>
+
+		<div id="modal-gallery-view">
+			<h3>Galerie photo</h3>
+
+			<div id="modal-gallery" class="modal-gallery"></div>
+
+			<button id="add-photo-button">Ajouter une photo</button>
+		</div>
+
+		<div id="modal-add-view" class="hidden">
+			<h3>Ajout photo</h3>
+
+			<form id="add-photo-form">
+				<label for="photo">Image</label>
+				<input type="file" id="photo" name="photo">
+
+				<label for="title">Titre</label>
+				<input type="text" id="title" name="title">
+
+				<label for="category">Catégorie</label>
+				<select id="category" name="category"></select>
+
+				<input type="submit" value="Valider">
+			</form>
+		</div>
+
+	</div>
+
+</div>
 
 <script src="./assets/js/script.js"></script>
 
