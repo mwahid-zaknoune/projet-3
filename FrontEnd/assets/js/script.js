@@ -77,6 +77,7 @@ function createFilters(categories) {
 
     btn.addEventListener("click", () => {
       const filtered = allWorks.filter(work => work.categoryId === cat.id);
+
       displayWorks(filtered);
       setActive(btn);
     });
@@ -99,6 +100,7 @@ function setActive(btnActive) {
 
 function checkAdminMode() {
   const token = localStorage.getItem("token");
+
   const editButton = document.getElementById("edit-button");
 
   if (token) {
@@ -119,8 +121,11 @@ function checkAdminMode() {
     });
 
     document.getElementById("filters").style.display = "none";
+
     editButton.style.display = "block";
+
   } else {
+
     editButton.style.display = "none";
   }
 }
@@ -141,6 +146,7 @@ const modalGalleryView = document.getElementById("modal-gallery-view");
 const modalAddView = document.getElementById("modal-add-view");
 
 editButton.addEventListener("click", () => {
+
   modal.classList.remove("hidden");
 
   modalGalleryView.classList.remove("hidden");
@@ -155,18 +161,21 @@ closeModal.addEventListener("click", () => {
 });
 
 modal.addEventListener("click", (event) => {
+
   if (event.target === modal) {
     modal.classList.add("hidden");
   }
 });
 
 addPhotoButton.addEventListener("click", () => {
+
   modalGalleryView.classList.add("hidden");
   modalAddView.classList.remove("hidden");
   backModal.classList.remove("hidden");
 });
 
 backModal.addEventListener("click", () => {
+
   modalAddView.classList.add("hidden");
   modalGalleryView.classList.remove("hidden");
   backModal.classList.add("hidden");
@@ -177,10 +186,13 @@ backModal.addEventListener("click", () => {
 // =====================
 
 function displayModalGallery(works) {
+
   const modalGallery = document.getElementById("modal-gallery");
+
   modalGallery.innerHTML = "";
 
   works.forEach(work => {
+
     const figure = document.createElement("figure");
     figure.classList.add("modal-work");
 
@@ -204,21 +216,27 @@ function displayModalGallery(works) {
 }
 
 async function deleteWork(id) {
+
   const token = localStorage.getItem("token");
 
   const response = await fetch(`http://localhost:5678/api/works/${id}`, {
+
     method: "DELETE",
+
     headers: {
       "Authorization": `Bearer ${token}`
     }
   });
 
   if (response.ok) {
+
     allWorks = allWorks.filter(work => work.id !== id);
 
     displayWorks(allWorks);
     displayModalGallery(allWorks);
+
   } else {
+
     console.log("Erreur suppression");
   }
 }
@@ -232,20 +250,29 @@ const imagePreview = document.getElementById("image-preview");
 const categorySelect = document.getElementById("category");
 const addPhotoForm = document.getElementById("add-photo-form");
 
+// PREVIEW IMAGE
+
 photoInput.addEventListener("change", () => {
+
   const file = photoInput.files[0];
 
   if (file) {
+
     imagePreview.src = URL.createObjectURL(file);
     imagePreview.classList.remove("hidden");
   }
 });
 
+// CATEGORIES DYNAMIQUES
+
 function displayCategoriesInForm(categories) {
+
   categorySelect.innerHTML = "";
 
   categories.forEach(category => {
+
     const option = document.createElement("option");
+
     option.value = category.id;
     option.textContent = category.name;
 
@@ -253,38 +280,60 @@ function displayCategoriesInForm(categories) {
   });
 }
 
+// ENVOI FORMULAIRE
+
 addPhotoForm.addEventListener("submit", async (event) => {
+
   event.preventDefault();
 
   const title = document.getElementById("title").value;
   const category = document.getElementById("category").value;
   const image = photoInput.files[0];
+
   const token = localStorage.getItem("token");
 
   if (!title || !category || !image) {
+
     alert("Veuillez remplir tous les champs");
     return;
   }
 
   const formData = new FormData();
+
   formData.append("image", image);
   formData.append("title", title);
   formData.append("category", category);
 
   const response = await fetch("http://localhost:5678/api/works", {
+
     method: "POST",
+
     headers: {
       "Authorization": `Bearer ${token}`
     },
+
     body: formData
   });
 
   if (response.ok) {
-    alert("Projet ajouté avec succès");
+
+    const newWork = await response.json();
+
+    allWorks.push(newWork);
+
+    displayWorks(allWorks);
+    displayModalGallery(allWorks);
 
     addPhotoForm.reset();
+
     imagePreview.classList.add("hidden");
+
+    modalAddView.classList.add("hidden");
+    modalGalleryView.classList.remove("hidden");
+    backModal.classList.add("hidden");
+
   } else {
+
     alert("Erreur lors de l’ajout du projet");
   }
 });
